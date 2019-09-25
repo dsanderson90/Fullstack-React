@@ -1,7 +1,38 @@
 class ProductList extends React.Component {
+
+
+  state = {
+      products: [],
+    }
+
+
+
+  componentDidMount() {
+    this.setState({products: Seed.products})
+  }
+  handleProductUpVote = (productId) => {
+    const nextProducts = this.state.products.map( product => {
+        if(product.id === productId) {
+          return Object.assign({}, product, {
+            votes: product.votes + 1
+          });
+        }
+          else {
+            return product;
+          }
+        });
+        this.setState({
+          products: nextProducts
+        })
+      }
+
   render() {
-    const products = Seed.products.map(product => (
+
+    const products = this.state.products.sort((a, b) => b.votes - a.votes)
+
+    const productComponents = products.map(product => (
       <Product
+          key={product.id}
           id={product.id}
           title={product.title}
           description={product.description}
@@ -9,17 +40,21 @@ class ProductList extends React.Component {
           votes={product.votes}
           submitterAvatarUrl={product.submitterAvatarUrl}
           productImageUrl={product.productImageUrl}
+          onVote={this.handleProductUpVote}
         />
     ));
     return (
       <div className='ui unstackable items'>
-        {products}
+        {productComponents}
       </div>
     );
     }
   }
 
 class Product extends React.Component {
+  handleUpvote = () => (
+    this.props.onVote(this.props.id)
+  )
   render() {
     return (
       <div className='item'>
@@ -28,7 +63,7 @@ class Product extends React.Component {
         </div>
         <div className='middle aligned content'>
           <div className='header'>
-            <a>
+            <a onClick={this.handleUpvote}>
               <i className='large caret up icon' />
             </a>
             {this.props.votes}
