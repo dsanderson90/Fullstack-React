@@ -3,5 +3,4 @@ tests_output/
 npm-debug.log.*
 DS_Store
 ./idea
-node_modules
-./voting_app/node_modules
+node_modules/
